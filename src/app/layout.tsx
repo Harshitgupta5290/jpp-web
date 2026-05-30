@@ -193,7 +193,11 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <head>
         <link rel="preconnect" href="https://api.fontshare.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://api.fontshare.com" />
         <link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet" />
+        {/* Preload the most-used font weight to eliminate FOUT */}
+        <link rel="preload" as="font" crossOrigin="anonymous"
+          href="https://api.fontshare.com/v2/css?f[]=clash-display@700&display=swap" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
 
         {/* Geo meta tags for local SEO */}

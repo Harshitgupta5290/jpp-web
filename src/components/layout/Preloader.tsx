@@ -8,7 +8,7 @@ export default function Preloader() {
   const [visible, setVisible] = useState(true)
 
   useEffect(() => {
-    const timer = setTimeout(() => setVisible(false), 1800)
+    const timer = setTimeout(() => setVisible(false), 1000)
     return () => clearTimeout(timer)
   }, [])
 
@@ -116,7 +116,7 @@ export default function Preloader() {
               <motion.div
                 initial={{ width: '0%' }}
                 animate={{ width: '100%' }}
-                transition={{ duration: 1.6, ease: 'easeInOut' }}
+                transition={{ duration: 0.9, ease: 'easeInOut' }}
                 className="h-full rounded-full"
                 style={{ background: 'linear-gradient(90deg, #2D6FFF, #F5C518)' }}
               />
