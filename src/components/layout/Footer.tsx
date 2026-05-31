@@ -1,23 +1,26 @@
 'use client'
 
 import Link from 'next/link'
-import { Printer, Phone, Mail, MapPin, ArrowUpRight, Share2 } from 'lucide-react'
+import { Printer, Phone, Mail, MapPin, ArrowUpRight, Shield, Award } from 'lucide-react'
 
 const PRODUCT_LINKS = [
-  { href: '/catalog/business-cards', label: 'Business Cards' },
-  { href: '/catalog/brochures', label: 'Brochures & Pamphlets' },
-  { href: '/catalog/banners', label: 'Banners & Flex' },
-  { href: '/catalog/letterheads', label: 'Letterheads' },
-  { href: '/catalog/packaging', label: 'Packaging Boxes' },
-  { href: '/catalog/wedding-cards', label: 'Wedding Cards' },
+  { href: '/catalog/business-cards',  label: 'Business Cards' },
+  { href: '/catalog/brochures',       label: 'Brochures & Pamphlets' },
+  { href: '/catalog/banners',         label: 'Banners & Flex' },
+  { href: '/catalog/letterheads',     label: 'Letterheads' },
+  { href: '/catalog/packaging',       label: 'Packaging Boxes' },
+  { href: '/catalog/wedding-cards',   label: 'Wedding Cards' },
+  { href: '/catalog/photo-printing',  label: 'Photo Printing' },
+  { href: '/catalog/merchandise',     label: 'Branded Merchandise' },
 ]
 
 const COMPANY_LINKS = [
-  { href: '/about', label: 'About Us' },
-  { href: '/catalog', label: 'All Products' },
+  { href: '/about',        label: 'About Us' },
+  { href: '/clients',      label: 'Our Clients' },
+  { href: '/catalog',      label: 'All Products' },
   { href: '/order/custom', label: 'Custom Order' },
-  { href: '/track', label: 'Track Order' },
-  { href: '/contact', label: 'Contact' },
+  { href: '/track',        label: 'Track Order' },
+  { href: '/contact',      label: 'Contact' },
 ]
 
 const WHATSAPP_URL = `https://wa.me/919999999999?text=${encodeURIComponent('Hi! I want to place a printing order.')}`
@@ -30,99 +33,110 @@ function WhatsAppIcon({ size = 16 }: { size?: number }) {
   )
 }
 
+// ─── Payment Badge ─────────────────────────────────────────────────────────────
+
+function PaymentBadge({ label }: { label: string }) {
+  return (
+    <div className="flex items-center justify-center px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 text-xs font-semibold text-white/70" style={{ minWidth: '60px' }}>
+      {label}
+    </div>
+  )
+}
+
 export default function Footer() {
   return (
-    <footer className="bg-bg-secondary border-t border-border mt-auto">
+    <footer style={{ background: '#0A0F1E' }}>
       {/* CTA Banner */}
-      <div className="border-b border-border">
-        <div className="container-page py-10">
+      <div className="border-b border-white/[0.06]">
+        <div className="container-page py-12">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
-              <h2 className="font-display text-2xl font-bold text-text-primary">
+              <h2 className="font-display text-2xl font-bold text-white">
                 Ready to print?{' '}
                 <span className="text-gradient-blue">Get an instant quote.</span>
               </h2>
-              <p className="text-text-secondary mt-1 text-sm">
-                No design? No problem. Our team will help you create stunning print-ready artwork.
+              <p className="text-slate-400 mt-1.5 text-sm">
+                No design? No problem — our team will help create stunning print-ready artwork.
               </p>
             </div>
             <div className="flex items-center gap-3 shrink-0">
-              <a
-                href={WHATSAPP_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 h-11 px-5 rounded-md text-sm font-medium bg-[#25D366]/10 text-[#25D366] border border-[#25D366]/20 hover:bg-[#25D366]/20 transition-colors"
-              >
-                <WhatsAppIcon size={16} />
-                Chat Now
+              <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer"
+                className="flex items-center gap-2 h-11 px-5 rounded-xl text-sm font-semibold bg-[#25D366]/10 text-[#25D366] border border-[#25D366]/20 hover:bg-[#25D366]/20 transition-colors">
+                <WhatsAppIcon size={16} /> Chat Now
               </a>
-              <Link
-                href="/order/custom"
-                className="flex items-center gap-2 h-11 px-5 rounded-md text-sm font-medium bg-brand-blue text-white hover:bg-[#1a5ce8] transition-colors shadow-glow"
-              >
-                Get Free Quote
-                <ArrowUpRight size={16} />
+              <Link href="/order/custom"
+                className="flex items-center gap-2 h-11 px-5 rounded-xl text-sm font-semibold bg-brand-blue text-white hover:bg-[#1a5ce8] transition-colors shadow-glow">
+                Get Free Quote <ArrowUpRight size={16} />
               </Link>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Main Footer Grid */}
+      {/* Main Grid */}
       <div className="container-page py-14">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10">
 
-          {/* Col 1 — Brand */}
-          <div className="lg:col-span-1 space-y-5">
+          {/* Col 1 — Brand (2 cols wide) */}
+          <div className="lg:col-span-2 space-y-5">
             <div className="flex items-center gap-2.5">
               <div className="w-9 h-9 rounded-md flex items-center justify-center bg-gradient-to-br from-brand-blue to-[#1a4fd8] shadow-glow shrink-0">
                 <Printer size={18} className="text-white" strokeWidth={2.2} />
               </div>
               <div className="leading-none">
-                <span className="font-display font-bold text-xl text-text-primary block">JPP</span>
-                <span className="text-[10px] text-text-secondary tracking-[0.15em] uppercase block -mt-0.5">Est. 1972</span>
+                <span className="font-display font-bold text-xl text-white block">JPP</span>
+                <span className="text-[10px] text-slate-400 tracking-[0.15em] uppercase block -mt-0.5">Est. 1972</span>
               </div>
             </div>
-            <p className="text-sm text-text-secondary leading-relaxed">
-              Jawahar Printing Press — Haryana&apos;s most trusted printing partner for over 50 years. Quality you can feel, speed you can count on.
+
+            <p className="text-sm text-slate-400 leading-relaxed">
+              Jawahar Printing Press — Haryana&apos;s most trusted printing partner for over 52 years. Quality you can feel, speed you can count on.
             </p>
+
             <div className="space-y-2.5">
-              <a href="tel:+919999999999" className="flex items-center gap-2.5 text-sm text-text-secondary hover:text-text-primary transition-colors group">
-                <Phone size={15} className="text-brand-blue shrink-0" />
-                +91 99999 99999
+              <a href="tel:+919999999999" className="flex items-center gap-2.5 text-sm text-slate-400 hover:text-white transition-colors group">
+                <Phone size={14} className="text-brand-blue shrink-0" /> +91 99999 99999
               </a>
-              <a href="mailto:info@jawaharprintingpress.com" className="flex items-center gap-2.5 text-sm text-text-secondary hover:text-text-primary transition-colors group">
-                <Mail size={15} className="text-brand-blue shrink-0" />
-                info@jawaharprintingpress.com
+              <a href="mailto:info@jawaharprintingpress.com" className="flex items-center gap-2.5 text-sm text-slate-400 hover:text-white transition-colors group">
+                <Mail size={14} className="text-brand-blue shrink-0" /> info@jawaharprintingpress.com
               </a>
-              <div className="flex items-start gap-2.5 text-sm text-text-secondary">
-                <MapPin size={15} className="text-brand-blue shrink-0 mt-0.5" />
+              <div className="flex items-start gap-2.5 text-sm text-slate-400">
+                <MapPin size={14} className="text-brand-blue shrink-0 mt-0.5" />
                 <span>Near Old Civil Hospital, Rohtak, Haryana 124001</span>
               </div>
             </div>
+
+            {/* Social icons */}
             <div className="flex items-center gap-2 pt-1">
-              {/* Instagram */}
-              <a href="#" aria-label="Instagram" className="w-8 h-8 rounded-md flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-white/5 border border-border hover:border-brand-blue/30 transition-all">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+              <a href="#" aria-label="Instagram" className="w-8 h-8 rounded-md flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 border border-white/10 transition-all">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
               </a>
-              {/* Facebook */}
-              <a href="#" aria-label="Facebook" className="w-8 h-8 rounded-md flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-white/5 border border-border hover:border-brand-blue/30 transition-all">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+              <a href="#" aria-label="Facebook" className="w-8 h-8 rounded-md flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 border border-white/10 transition-all">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
               </a>
-              {/* Share / Social generic */}
-              <a href="#" aria-label="Share" className="w-8 h-8 rounded-md flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-white/5 border border-border hover:border-brand-blue/30 transition-all">
-                <Share2 size={15} />
+              <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="w-8 h-8 rounded-md flex items-center justify-center text-[#25D366] hover:bg-[#25D366]/10 border border-[#25D366]/20 transition-all">
+                <WhatsAppIcon size={14} />
               </a>
+            </div>
+
+            {/* Certifications / badges */}
+            <div className="flex flex-wrap gap-2 pt-2">
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 text-xs font-medium text-white/60">
+                <Shield size={11} className="text-brand-blue" /> Secure Payment
+              </div>
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 text-xs font-medium text-white/60">
+                <Award size={11} className="text-amber-400" /> 52 Years Quality
+              </div>
             </div>
           </div>
 
           {/* Col 2 — Products */}
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-text-primary tracking-wide uppercase">Products</h3>
-            <ul className="space-y-2.5">
+            <h3 className="text-xs font-bold text-white tracking-widest uppercase">Products</h3>
+            <ul className="space-y-2">
               {PRODUCT_LINKS.map(({ href, label }) => (
                 <li key={href}>
-                  <Link href={href} className="text-sm text-text-secondary hover:text-text-primary transition-colors hover:translate-x-0.5 inline-block transform duration-150">
+                  <Link href={href} className="text-sm text-slate-400 hover:text-white transition-colors hover:translate-x-0.5 inline-block transform duration-150">
                     {label}
                   </Link>
                 </li>
@@ -132,11 +146,11 @@ export default function Footer() {
 
           {/* Col 3 — Company */}
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-text-primary tracking-wide uppercase">Company</h3>
-            <ul className="space-y-2.5">
+            <h3 className="text-xs font-bold text-white tracking-widest uppercase">Company</h3>
+            <ul className="space-y-2">
               {COMPANY_LINKS.map(({ href, label }) => (
                 <li key={href}>
-                  <Link href={href} className="text-sm text-text-secondary hover:text-text-primary transition-colors hover:translate-x-0.5 inline-block transform duration-150">
+                  <Link href={href} className="text-sm text-slate-400 hover:text-white transition-colors hover:translate-x-0.5 inline-block transform duration-150">
                     {label}
                   </Link>
                 </li>
@@ -144,38 +158,54 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Col 4 — Map */}
+          {/* Col 4 — Map + hours */}
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-text-primary tracking-wide uppercase">Find Us</h3>
-            <div className="rounded-md overflow-hidden border border-border aspect-video bg-bg-card flex items-center justify-center">
+            <h3 className="text-xs font-bold text-white tracking-widest uppercase">Find Us</h3>
+            <div className="rounded-xl overflow-hidden border border-white/10 aspect-video bg-white/5">
               <iframe
                 title="Jawahar Printing Press Location"
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3500.5177!2d76.5748!3d28.8955!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjjCsDUzJzQ0LjAiTiA3NsKwMzQnMjkuMyJF!5e0!3m2!1sen!2sin!4v1234567890"
-                width="100%"
-                height="100%"
+                width="100%" height="100%"
                 style={{ border: 0, filter: 'invert(90%) hue-rotate(180deg)' }}
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
+                allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade"
               />
             </div>
-            <p className="text-xs text-text-secondary">
-              Open Mon–Sat, 9 AM – 7 PM IST
-            </p>
+            <div className="space-y-1.5">
+              <p className="text-xs text-white/50 font-medium uppercase tracking-wide">Business Hours</p>
+              <p className="text-sm text-slate-300">Mon–Sat: 9 AM – 7 PM IST</p>
+              <p className="text-sm text-slate-500">Sunday: Closed</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Payment methods */}
+      <div className="border-t border-white/[0.06]">
+        <div className="container-page py-5">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-xs text-slate-500">Secure payments powered by</p>
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              <PaymentBadge label="Razorpay" />
+              <PaymentBadge label="UPI" />
+              <PaymentBadge label="Visa" />
+              <PaymentBadge label="Mastercard" />
+              <PaymentBadge label="Net Banking" />
+              <PaymentBadge label="EMI" />
+            </div>
           </div>
         </div>
       </div>
 
       {/* Bottom bar */}
-      <div className="border-t border-border">
+      <div className="border-t border-white/[0.06]">
         <div className="container-page py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-xs text-text-secondary">
-            © {new Date().getFullYear()} Jawahar Printing Press. All rights reserved.
+          <p className="text-xs text-slate-500">
+            © {new Date().getFullYear()} Jawahar Printing Press. All rights reserved. GST: 06AABCJ1234M1Z5
           </p>
           <div className="flex items-center gap-4">
-            <Link href="/privacy" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Privacy Policy</Link>
-            <Link href="/terms" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Terms of Service</Link>
-            <Link href="/refunds" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Refund Policy</Link>
+            <Link href="/privacy" className="text-xs text-slate-500 hover:text-white transition-colors">Privacy Policy</Link>
+            <Link href="/terms"   className="text-xs text-slate-500 hover:text-white transition-colors">Terms of Service</Link>
+            <Link href="/refunds" className="text-xs text-slate-500 hover:text-white transition-colors">Refund Policy</Link>
           </div>
         </div>
       </div>

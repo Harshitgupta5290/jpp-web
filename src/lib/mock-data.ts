@@ -162,14 +162,18 @@ export function getProductWithCategory(productSlug: string) {
   return { product, category, slabs }
 }
 
-// Category accent colors keyed by slug
-export const CATEGORY_COLORS: Record<string, { icon: string; bg: string; border: string }> = {
-  'business-cards': { icon: 'text-blue-400', bg: 'from-blue-500/20 to-blue-600/5', border: 'hover:border-blue-500/30' },
-  'brochures':      { icon: 'text-purple-400', bg: 'from-purple-500/20 to-purple-600/5', border: 'hover:border-purple-500/30' },
-  'banners':        { icon: 'text-orange-400', bg: 'from-orange-500/20 to-orange-600/5', border: 'hover:border-orange-500/30' },
-  'packaging':      { icon: 'text-green-400', bg: 'from-green-500/20 to-green-600/5', border: 'hover:border-green-500/30' },
-  'letterheads':    { icon: 'text-cyan-400', bg: 'from-cyan-500/20 to-cyan-600/5', border: 'hover:border-cyan-500/30' },
-  'wedding-cards':  { icon: 'text-pink-400', bg: 'from-pink-500/20 to-pink-600/5', border: 'hover:border-pink-500/30' },
-  'photo-printing': { icon: 'text-yellow-400', bg: 'from-yellow-500/20 to-yellow-600/5', border: 'hover:border-yellow-500/30' },
-  'merchandise':    { icon: 'text-indigo-400', bg: 'from-indigo-500/20 to-indigo-600/5', border: 'hover:border-indigo-500/30' },
+// Category accent colors keyed by slug — light theme
+export const CATEGORY_COLORS: Record<string, {
+  icon: string; bg: string; border: string;
+  soft: string; softBorder: string; color: string;
+  gradientStart: string; gradientEnd: string; gradientLight: string;
+}> = {
+  'business-cards': { icon: 'text-blue-600',   bg: 'from-blue-500 to-blue-700',    border: 'hover:border-blue-300',   soft: 'bg-blue-50',   softBorder: 'border-blue-100',   color: '#2D6FFF', gradientStart: '#1d4ed8', gradientEnd: '#3b82f6', gradientLight: '#bfdbfe' },
+  'brochures':      { icon: 'text-purple-600',  bg: 'from-purple-500 to-purple-700',border: 'hover:border-purple-300', soft: 'bg-purple-50', softBorder: 'border-purple-100', color: '#9333EA', gradientStart: '#7c3aed', gradientEnd: '#a855f7', gradientLight: '#e9d5ff' },
+  'banners':        { icon: 'text-orange-600',  bg: 'from-orange-500 to-orange-700',border: 'hover:border-orange-300', soft: 'bg-orange-50', softBorder: 'border-orange-100', color: '#EA580C', gradientStart: '#c2410c', gradientEnd: '#f97316', gradientLight: '#fed7aa' },
+  'packaging':      { icon: 'text-green-600',   bg: 'from-green-500 to-green-700',  border: 'hover:border-green-300',  soft: 'bg-green-50',  softBorder: 'border-green-100',  color: '#16A34A', gradientStart: '#15803d', gradientEnd: '#22c55e', gradientLight: '#bbf7d0' },
+  'letterheads':    { icon: 'text-cyan-600',    bg: 'from-cyan-500 to-cyan-700',    border: 'hover:border-cyan-300',   soft: 'bg-cyan-50',   softBorder: 'border-cyan-100',   color: '#0891B2', gradientStart: '#0e7490', gradientEnd: '#06b6d4', gradientLight: '#a5f3fc' },
+  'wedding-cards':  { icon: 'text-pink-600',    bg: 'from-pink-500 to-pink-700',    border: 'hover:border-pink-300',   soft: 'bg-pink-50',   softBorder: 'border-pink-100',   color: '#DB2777', gradientStart: '#be185d', gradientEnd: '#ec4899', gradientLight: '#fbcfe8' },
+  'photo-printing': { icon: 'text-yellow-600',  bg: 'from-yellow-500 to-yellow-700',border: 'hover:border-yellow-300', soft: 'bg-yellow-50', softBorder: 'border-yellow-100', color: '#CA8A04', gradientStart: '#a16207', gradientEnd: '#eab308', gradientLight: '#fef9c3' },
+  'merchandise':    { icon: 'text-indigo-600',  bg: 'from-indigo-500 to-indigo-700',border: 'hover:border-indigo-300', soft: 'bg-indigo-50', softBorder: 'border-indigo-100', color: '#4F46E5', gradientStart: '#4338ca', gradientEnd: '#6366f1', gradientLight: '#c7d2fe' },
 }

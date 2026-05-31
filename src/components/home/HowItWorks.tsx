@@ -1,77 +1,48 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { ClipboardList, Palette, CreditCard, PackageCheck } from 'lucide-react'
+import { ClipboardList, Palette, CreditCard, PackageCheck, ArrowRight } from 'lucide-react'
+import Link from 'next/link'
 
 const STEPS = [
   {
     step: '01', icon: ClipboardList,
     title: 'Choose & Customize',
-    description: 'Select your product, pick size, paper type, and finish. Our live calculator shows exact pricing as you configure.',
-    color: 'text-brand-blue', bg: 'bg-brand-blue/10 border-brand-blue/30',
-    glow: 'rgba(45,111,255,0.2)',
+    description: 'Pick your product, select size, paper type, and finish. Our live price calculator shows your exact cost as you configure — zero hidden charges.',
+    color: '#2D6FFF', softBg: 'bg-blue-50', softBorder: 'border-blue-100',
   },
   {
     step: '02', icon: Palette,
     title: 'Upload or Design',
-    description: 'Upload your print-ready artwork (PDF/AI/PSD) or let our AI Design Brief tool help you communicate your vision.',
-    color: 'text-purple-400', bg: 'bg-purple-500/10 border-purple-500/30',
-    glow: 'rgba(168,85,247,0.2)',
+    description: 'Upload print-ready artwork (PDF/AI/PSD) or describe your vision over WhatsApp. Our in-house designers provide free guidance on artwork preparation.',
+    color: '#8B5CF6', softBg: 'bg-purple-50', softBorder: 'border-purple-100',
   },
   {
     step: '03', icon: CreditCard,
     title: 'Pay 50% Advance',
-    description: 'Confirm your order with a 50% advance via Razorpay. Balance can be paid online or as cash-on-delivery.',
-    color: 'text-brand-gold', bg: 'bg-brand-gold/10 border-brand-gold/30',
-    glow: 'rgba(245,197,24,0.2)',
+    description: "Confirm with a 50% advance via Razorpay — cards, UPI, net banking all accepted. Balance is collected on delivery or before dispatch, whichever you prefer.",
+    color: '#F5A500', softBg: 'bg-amber-50', softBorder: 'border-amber-100',
   },
   {
     step: '04', icon: PackageCheck,
     title: 'Receive Your Print',
-    description: 'Track your order in real-time. Same-day dispatch for orders before 12 PM. Pan-India delivery in 3–7 days.',
-    color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/30',
-    glow: 'rgba(52,211,153,0.2)',
+    description: 'Track in real-time. Same-day dispatch for orders before 12 PM. Pan-India delivery in 3–7 business days. Free reprint if quality doesn\'t meet expectations.',
+    color: '#10B981', softBg: 'bg-emerald-50', softBorder: 'border-emerald-100',
   },
 ]
 
 export default function HowItWorks() {
   return (
-    <section
-      className="relative overflow-hidden py-20"
-      style={{ background: '#090e1b' }}
-    >
-      {/* Blueprint grid */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage: 'linear-gradient(rgba(45,111,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(45,111,255,0.04) 1px, transparent 1px)',
-          backgroundSize: '48px 48px',
-        }}
-        aria-hidden="true"
-      />
-
-      {/* Center radial */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{ background: 'radial-gradient(ellipse 70% 70% at 50% 50%, rgba(45,111,255,0.05) 0%, transparent 65%)' }}
-        aria-hidden="true"
-      />
-
-      {/* Top/bottom borders */}
-      <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(45,111,255,0.3), transparent)' }} aria-hidden="true" />
-      <div className="absolute bottom-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(45,111,255,0.3), transparent)' }} aria-hidden="true" />
-
-      <div className="container-page relative z-10">
+    <section className="section bg-white">
+      <div className="container-page">
         <motion.div
-          initial={{ y: 20 }}
-          whileInView={{ y: 0 }}
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
-          className="text-center mb-16"
+          className="text-center mb-14"
         >
-          <p className="text-xs font-semibold text-brand-blue tracking-[0.25em] uppercase mb-3">
-            Simple Process
-          </p>
+          <span className="section-label">Simple Process</span>
           <h2 className="font-display font-bold text-text-primary">
             From idea to inbox{' '}
             <span className="text-gradient-gold">in 4 easy steps.</span>
@@ -82,38 +53,53 @@ export default function HowItWorks() {
         </motion.div>
 
         <div className="relative">
-          {/* Connecting line — desktop */}
+          {/* Connecting dashed line — desktop */}
           <div
-            className="hidden lg:block absolute top-[2.75rem] left-[calc(12.5%+2rem)] right-[calc(12.5%+2rem)] h-px"
-            style={{ background: 'linear-gradient(90deg, transparent, rgba(45,111,255,0.3) 15%, rgba(45,111,255,0.3) 85%, transparent)' }}
+            className="hidden lg:block absolute top-[2.5rem] left-[calc(12.5%+2.5rem)] right-[calc(12.5%+2.5rem)] h-px border-t-2 border-dashed border-border"
             aria-hidden="true"
           />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {STEPS.map(({ step, icon: Icon, title, description, color, bg, glow }, i) => (
+            {STEPS.map(({ step, icon: Icon, title, description, color, softBg, softBorder }, i) => (
               <motion.div
                 key={step}
-                initial={{ y: 24 }}
-                whileInView={{ y: 0 }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-40px' }}
-                transition={{ delay: i * 0.1, duration: 0.35 }}
+                transition={{ delay: i * 0.1, duration: 0.4 }}
                 className="flex flex-col items-center text-center group"
               >
-                <div
-                  className={`relative w-16 h-16 rounded-2xl border ${bg} flex items-center justify-center mb-6 shrink-0 transition-transform duration-300 group-hover:scale-110`}
-                  style={{ boxShadow: `0 0 28px ${glow}` }}
-                >
-                  <Icon size={26} className={color} strokeWidth={1.8} />
-                  <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-bg-primary border border-border text-[10px] font-bold text-text-secondary flex items-center justify-center font-mono">
+                {/* Icon circle */}
+                <div className="relative mb-6">
+                  <div className={`w-20 h-20 rounded-2xl border-2 ${softBg} ${softBorder} flex items-center justify-center transition-all duration-300 group-hover:shadow-medium group-hover:scale-105`}>
+                    <Icon size={28} style={{ color }} strokeWidth={1.8} />
+                  </div>
+                  {/* Step badge */}
+                  <span className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-white border-2 text-[10px] font-bold text-text-secondary flex items-center justify-center font-mono shadow-soft"
+                    style={{ borderColor: color }}>
                     {step}
                   </span>
                 </div>
-                <h3 className="font-display font-semibold text-base text-text-primary mb-2">{title}</h3>
+                <h3 className="font-display font-bold text-base text-text-primary mb-2">{title}</h3>
                 <p className="text-sm text-text-secondary leading-relaxed">{description}</p>
               </motion.div>
             ))}
           </div>
         </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.4 }}
+          className="flex justify-center mt-12"
+        >
+          <Link href="/catalog"
+            className="flex items-center gap-2 h-12 px-8 rounded-xl bg-brand-blue text-white font-semibold text-sm hover:bg-[#1a5ce8] transition-colors shadow-glow-sm group">
+            Start Your First Order
+            <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+          </Link>
+        </motion.div>
       </div>
     </section>
   )

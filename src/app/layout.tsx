@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     template: '%s | Jawahar Printing Press, Rohtak',
   },
   description:
-    'Jawahar Printing Press, Rohtak — Haryana\'s most trusted printing partner since 1972. Business cards, brochures, banners, wedding cards, packaging & more. Bulk pricing, same-day dispatch, pan-India delivery. Order online, get instant quote.',
+    "Jawahar Printing Press, Rohtak — Haryana's most trusted printing partner since 1972. Business cards, brochures, banners, wedding cards, packaging & more. Bulk pricing, same-day dispatch, pan-India delivery. Order online, get instant quote.",
   keywords: [
     'printing press Rohtak',
     'printing press Haryana',
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
     siteName: 'Jawahar Printing Press',
     title: 'Jawahar Printing Press Rohtak — Premium Printing Since 1972',
     description:
-      'Haryana\'s most trusted printing partner since 1972. Business cards, brochures, banners, wedding cards, packaging & more. Bulk pricing, pan-India delivery.',
+      "Haryana's most trusted printing partner since 1972. Business cards, brochures, banners, wedding cards, packaging & more. Bulk pricing, pan-India delivery.",
     images: [
       {
         url: `${SITE_URL}/og-image.jpg`,
@@ -71,7 +71,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Jawahar Printing Press Rohtak — Premium Printing Since 1972',
-    description: 'Haryana\'s most trusted print partner since 1972. Order online, track live.',
+    description: "Haryana's most trusted print partner since 1972. Order online, track live.",
     images: [`${SITE_URL}/og-image.jpg`],
   },
 
@@ -87,24 +87,18 @@ export const metadata: Metadata = {
     },
   },
 
-  alternates: {
-    canonical: SITE_URL,
-  },
-
-  verification: {
-    google: process.env.GOOGLE_SITE_VERIFICATION ?? '',
-  },
+  alternates: { canonical: SITE_URL },
+  verification: { google: process.env.GOOGLE_SITE_VERIFICATION ?? '' },
 }
 
 export const viewport: Viewport = {
-  themeColor: '#0A0F1E',
-  colorScheme: 'dark',
+  themeColor: '#2D6FFF',
+  colorScheme: 'light',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
 }
 
-// JSON-LD structured data for local business + printing service
 const structuredData = {
   '@context': 'https://schema.org',
   '@graph': [
@@ -126,11 +120,7 @@ const structuredData = {
         postalCode: '124001',
         addressCountry: 'IN',
       },
-      geo: {
-        '@type': 'GeoCoordinates',
-        latitude: 28.8955,
-        longitude: 76.5799,
-      },
+      geo: { '@type': 'GeoCoordinates', latitude: 28.8955, longitude: 76.5799 },
       openingHoursSpecification: [
         {
           '@type': 'OpeningHoursSpecification',
@@ -142,10 +132,7 @@ const structuredData = {
       priceRange: '₹₹',
       paymentAccepted: ['Cash', 'Credit Card', 'UPI', 'Net Banking'],
       currenciesAccepted: 'INR',
-      areaServed: {
-        '@type': 'Country',
-        name: 'India',
-      },
+      areaServed: { '@type': 'Country', name: 'India' },
       hasOfferCatalog: {
         '@type': 'OfferCatalog',
         name: 'Printing Services',
@@ -165,9 +152,7 @@ const structuredData = {
         bestRating: '5',
         worstRating: '1',
       },
-      sameAs: [
-        `${SITE_URL}`,
-      ],
+      sameAs: [SITE_URL],
     },
     {
       '@type': 'WebSite',
@@ -184,48 +169,30 @@ const structuredData = {
   ],
 }
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <head>
         <link rel="preconnect" href="https://api.fontshare.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://api.fontshare.com" />
         <link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet" />
-        {/* Preload the most-used font weight to eliminate FOUT */}
         <link rel="preload" as="font" crossOrigin="anonymous"
           href="https://api.fontshare.com/v2/css?f[]=clash-display@700&display=swap" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-
-        {/* Geo meta tags for local SEO */}
         <meta name="geo.region" content="IN-HR" />
         <meta name="geo.placename" content="Rohtak, Haryana, India" />
         <meta name="geo.position" content="28.8955;76.5799" />
         <meta name="ICBM" content="28.8955, 76.5799" />
-
-        {/* Language + region */}
         <meta httpEquiv="content-language" content="en-IN" />
         <link rel="alternate" hrefLang="en-IN" href={SITE_URL} />
         <link rel="alternate" hrefLang="en" href={SITE_URL} />
       </head>
-      <body
-        className={`
-          ${inter.variable}
-          ${jetbrainsMono.variable}
-          font-body antialiased
-          bg-bg-primary text-text-primary
-        `}
-      >
-        {/* JSON-LD Structured Data */}
+      <body className={`${inter.variable} ${jetbrainsMono.variable} font-body antialiased bg-bg-primary text-text-primary`}>
         <Script
           id="structured-data"
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
-
         <Preloader />
         {children}
         <ToastContainer />
