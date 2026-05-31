@@ -27,6 +27,12 @@ export default function AdminTopBar({ user }: AdminTopBarProps) {
   const pathname  = usePathname()
   const router    = useRouter()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [notifCount, setNotifCount] = useState(0)
+
+  // Fetch real notification count
+  useState(() => {
+    fetch('/api/admin/notifications').then(r => r.json()).then(d => setNotifCount(d.count ?? 0)).catch(() => {})
+  })
 
   const pageTitle = BREADCRUMBS[pathname] ??
     (pathname.startsWith('/admin/orders/') ? 'Order Detail' :
@@ -68,10 +74,14 @@ export default function AdminTopBar({ user }: AdminTopBarProps) {
         </Link>
 
         {/* Notifications */}
-        <button className="relative w-9 h-9 flex items-center justify-center rounded-lg text-text-secondary hover:text-text-primary hover:bg-bg-secondary transition-colors">
+        <Link href="/admin/orders?filter=pending" className="relative w-9 h-9 flex items-center justify-center rounded-lg text-text-secondary hover:text-text-primary hover:bg-bg-secondary transition-colors">
           <Bell size={17} />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error" />
-        </button>
+          {notifCount > 0 && (
+            <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 bg-error text-white text-[9px] font-bold rounded-full flex items-center justify-center">
+              {notifCount > 9 ? '9+' : notifCount}
+            </span>
+          )}
+        </Link>
 
         {/* User menu */}
         <div className="relative">

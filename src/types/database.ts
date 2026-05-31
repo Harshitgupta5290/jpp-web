@@ -98,6 +98,9 @@ export interface Database {
           images: string[] | null
           is_active: boolean
           display_order: number | null
+          meta_title: string | null
+          meta_description: string | null
+          seo_keywords: string[] | null
           created_at: string
         }
         Insert: {
@@ -114,6 +117,9 @@ export interface Database {
           images?: string[] | null
           is_active?: boolean
           display_order?: number | null
+          meta_title?: string | null
+          meta_description?: string | null
+          seo_keywords?: string[] | null
           created_at?: string
         }
         Update: {
@@ -129,6 +135,9 @@ export interface Database {
           images?: string[] | null
           is_active?: boolean
           display_order?: number | null
+          meta_title?: string | null
+          meta_description?: string | null
+          seo_keywords?: string[] | null
         }
       }
       pricing_slabs: {
@@ -352,6 +361,31 @@ export interface Database {
           type?: PaymentType | null
           status?: PaymentLinkStatus
           expires_at?: string | null
+        }
+      }
+      contact_messages: {
+        Row: {
+          id: string
+          name: string
+          phone: string
+          email: string
+          message: string
+          product: string | null
+          replied: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          phone: string
+          email: string
+          message: string
+          product?: string | null
+          replied?: boolean
+          created_at?: string
+        }
+        Update: {
+          replied?: boolean
         }
       }
     }

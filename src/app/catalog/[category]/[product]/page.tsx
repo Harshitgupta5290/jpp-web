@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { notFound, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
@@ -14,8 +14,10 @@ import Button from '@/components/ui/Button'
 import { useCartStore } from '@/store/cartStore'
 import { useUIStore } from '@/store/uiStore'
 import { getProductWithCategory } from '@/lib/mock-data'
+import { createClient } from '@/lib/supabase/client'
 import { formatCurrency } from '@/lib/utils/formatters'
-import type { PriceCalculationResult } from '@/types/product'
+import type { PriceCalculationResult, PricingSlab } from '@/types/product'
+import type { Category, Product } from '@/types/product'
 
 interface ProductPageProps {
   params: { category: string; product: string }
@@ -33,43 +35,83 @@ export default function ProductPage({ params }: ProductPageProps) {
   const { addItem } = useCartStore()
   const { addToast } = useUIStore()
 
-  const data = getProductWithCategory(params.product)
-  if (!data || data.category?.slug !== params.category) notFound()
+  // Seed from mock for instant render; Supabase overrides if found
+  const mockData = getProductWithCategory(params.product)
 
-  const { product, category, slabs } = data
-  const specs = product.specifications as Record<string, string[]> | null
+  const [product, setProduct] = useState<Product | null>(mockData?.product ?? null)
+  const [category, setCategory] = useState<Category | null>(mockData?.category ?? null)
+  const [slabs, setSlabs] = useState<PricingSlab[]>(mockData?.slabs ?? [])
+  const [dbChecked, setDbChecked] = useState(!mockData) // if no mock, wait for DB
 
-  // Spec selections
-  const [selectedSpecs, setSelectedSpecs] = useState<Record<string, string>>(() => {
+  const [selectedSpecs, setSelectedSpecs] = useState<Record<string, string>>({})
+  const [priceResult, setPriceResult] = useState<PriceCalculationResult>({
+    unitPrice: 0, totalPrice: 0, slab: null, savingsPercent: null,
+  })
+  const [quantity, setQuantity] = useState(100)
+  const [designFile, setDesignFile] = useState<File | null>(null)
+  const [needsDesign, setNeedsDesign] = useState(false)
+  const [addingToCart, setAddingToCart] = useState(false)
+
+  // Initialize form values whenever product changes
+  useEffect(() => {
+    if (!product) return
+    const specs = product.specifications as Record<string, string[]> | null
     const initial: Record<string, string> = {}
     if (specs) {
       for (const [key, options] of Object.entries(specs)) {
         if (options.length > 0) initial[key] = options[0] ?? ''
       }
     }
-    return initial
-  })
+    setSelectedSpecs(initial)
+    setQuantity(product.min_quantity)
+    setPriceResult({
+      unitPrice: product.base_price ?? 0,
+      totalPrice: (product.base_price ?? 0) * product.min_quantity,
+      slab: null,
+      savingsPercent: null,
+    })
+  }, [product?.id])
 
-  const [priceResult, setPriceResult] = useState<PriceCalculationResult>({
-    unitPrice: product.base_price ?? 0,
-    totalPrice: (product.base_price ?? 0) * product.min_quantity,
-    slab: null,
-    savingsPercent: null,
-  })
-  const [quantity, setQuantity] = useState(product.min_quantity)
-  const [designFile, setDesignFile] = useState<File | null>(null)
-  const [needsDesign, setNeedsDesign] = useState(false)
-  const [addingToCart, setAddingToCart] = useState(false)
+  // Fetch from Supabase (overrides mock if DB has the product)
+  useEffect(() => {
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL) { setDbChecked(true); return }
+    const load = async () => {
+      try {
+        const supabase = createClient()
+        const { data: prod } = await (supabase as any)
+          .from('products')
+          .select('*, categories(*)')
+          .eq('slug', params.product)
+          .eq('is_active', true)
+          .single()
+
+        if (prod) {
+          setProduct(prod as Product)
+          if ((prod as any).categories) setCategory((prod as any).categories as Category)
+
+          const { data: slabsData } = await (supabase as any)
+            .from('pricing_slabs')
+            .select('*')
+            .eq('product_id', (prod as any).id)
+            .order('min_qty')
+
+          if (slabsData?.length) setSlabs(slabsData as PricingSlab[])
+        }
+      } catch { /* keep mock */ }
+      setDbChecked(true)
+    }
+    load()
+  }, [params.product])
 
   const handlePriceChange = useCallback((result: PriceCalculationResult, qty: number) => {
     setPriceResult(result)
     setQuantity(qty)
   }, [])
 
-  const handleAddToCart = async () => {
+  const handleAddToCart = useCallback(async () => {
+    if (!product) return
     setAddingToCart(true)
     await new Promise((r) => setTimeout(r, 400))
-
     addItem({
       id: `${product.id}-${Date.now()}`,
       product,
@@ -80,16 +122,31 @@ export default function ProductPage({ params }: ProductPageProps) {
       designFileUrl: designFile ? URL.createObjectURL(designFile) : undefined,
       needsDesign,
     })
-
     addToast({ type: 'success', title: 'Added to cart', message: `${product.name} × ${quantity.toLocaleString()}` })
     setAddingToCart(false)
-  }
+  }, [product, quantity, selectedSpecs, priceResult, designFile, needsDesign, addItem, addToast])
 
-  const handleOrderNow = async () => {
+  const handleOrderNow = useCallback(async () => {
     await handleAddToCart()
     router.push('/order/cart')
+  }, [handleAddToCart, router])
+
+  // Show loading skeleton while waiting for DB (only when no mock data)
+  if (!dbChecked && !product) {
+    return (
+      <PageWrapper>
+        <div className="container-page py-20 text-center text-text-secondary text-sm animate-pulse">
+          Loading product…
+        </div>
+      </PageWrapper>
+    )
   }
 
+  // Not found after both mock + DB checked
+  if (!product) notFound()
+  if (dbChecked && category && category.slug !== params.category) notFound()
+
+  const specs = product!.specifications as Record<string, string[]> | null
   const specEntries = specs ? Object.entries(specs) : []
 
   return (
@@ -109,20 +166,20 @@ export default function ProductPage({ params }: ProductPageProps) {
               <ChevronRight size={12} />
             </>
           )}
-          <span className="text-text-primary">{product.name}</span>
+          <span className="text-text-primary">{product!.name}</span>
         </nav>
 
         <div className="grid lg:grid-cols-2 gap-10 xl:gap-14">
-          {/* ── Left: Gallery ─────────────────────────────────────────── */}
+          {/* ── Left: Gallery ───────────────────────────── */}
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }}>
             <ProductGallery
-              images={product.images ?? []}
-              productName={product.name}
+              images={product!.images ?? []}
+              productName={product!.name}
               categorySlug={category?.slug}
             />
           </motion.div>
 
-          {/* ── Right: Config ─────────────────────────────────────────── */}
+          {/* ── Right: Config ───────────────────────────── */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -139,17 +196,16 @@ export default function ProductPage({ params }: ProductPageProps) {
                   {category.name}
                 </Link>
               )}
-              <h1 className="font-display font-bold text-text-primary mt-1 text-3xl">{product.name}</h1>
-              <p className="text-text-secondary mt-3 leading-relaxed">{product.description}</p>
+              <h1 className="font-display font-bold text-text-primary mt-1 text-3xl">{product!.name}</h1>
+              <p className="text-text-secondary mt-3 leading-relaxed">{product!.description}</p>
               <p className="mt-3 text-sm text-text-secondary">
                 Starting from{' '}
                 <span className="font-price font-bold text-text-primary text-lg">
-                  {formatCurrency(product.base_price ?? 0)}/pc
+                  {formatCurrency(product!.base_price ?? 0)}/pc
                 </span>
               </p>
             </div>
 
-            {/* Divider */}
             <div className="divider" />
 
             {/* Spec selectors */}
@@ -173,8 +229,8 @@ export default function ProductPage({ params }: ProductPageProps) {
               <h2 className="text-sm font-semibold text-text-primary">Quantity & Pricing</h2>
               <QuantityPriceCalculator
                 slabs={slabs}
-                basePrice={product.base_price}
-                minQuantity={product.min_quantity}
+                basePrice={product!.base_price}
+                minQuantity={product!.min_quantity}
                 onPriceChange={handlePriceChange}
               />
             </div>
@@ -184,7 +240,7 @@ export default function ProductPage({ params }: ProductPageProps) {
               <div className="flex items-center justify-between">
                 <h2 className="text-sm font-semibold text-text-primary">Design File</h2>
                 <a
-                  href={`https://wa.me/919999999999?text=${encodeURIComponent(`Hi! I need design help for ${product.name}.`)}`}
+                  href={`https://wa.me/919999999999?text=${encodeURIComponent(`Hi! I need design help for ${product!.name}.`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-xs text-brand-blue hover:underline flex items-center gap-1"

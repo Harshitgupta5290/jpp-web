@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import {
   ArrowLeft, CheckCircle, Clock, Package,
-  User, Phone, MapPin, MessageCircle, Save, AlertCircle, X,
+  User, Phone, MapPin, MessageCircle, Save, AlertCircle, X, FileText, Download,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import type { OrderStatus } from '@/types/database'
@@ -34,7 +34,7 @@ interface OrderDetail {
   notes: string | null; admin_notes: string | null
   estimated_delivery: string | null; created_at: string; updated_at: string
   customer: { full_name: string | null; email: string | null; phone: string | null } | null
-  items: { id: string; product_name: string | null; quantity: number | null; unit_price: number | null; total_price: number | null; specifications: Record<string, unknown> | null }[]
+  items: { id: string; product_name: string | null; quantity: number | null; unit_price: number | null; total_price: number | null; specifications: Record<string, unknown> | null; design_file_url: string | null; needs_design: boolean }[]
   history: { id: string; status: OrderStatus | null; note: string | null; created_at: string }[]
   delivery_address: Record<string, string> | null
 }
@@ -49,8 +49,8 @@ const MOCK_ORDER: OrderDetail = {
   updated_at: new Date(Date.now() - 1800000).toISOString(),
   customer: { full_name: 'Rahul Sharma', email: 'rahul@example.com', phone: '9876543210' },
   items: [
-    { id: 'i1', product_name: 'Premium Business Cards', quantity: 500, unit_price: 8, total_price: 4000, specifications: { size: '3.5×2"', paper: '400 GSM', finish: 'Matte Lamination', sides: 'Double Side' } },
-    { id: 'i2', product_name: 'Delivery Charge', quantity: 1, unit_price: 200, total_price: 200, specifications: null },
+    { id: 'i1', product_name: 'Premium Business Cards', quantity: 500, unit_price: 8, total_price: 4000, specifications: { size: '3.5×2"', paper: '400 GSM', finish: 'Matte Lamination', sides: 'Double Side' }, design_file_url: null, needs_design: false },
+    { id: 'i2', product_name: 'Delivery Charge', quantity: 1, unit_price: 200, total_price: 200, specifications: null, design_file_url: null, needs_design: false },
   ],
   history: [
     { id: 'h1', status: 'pending_quote', note: 'Order placed by customer', created_at: new Date(Date.now() - 7200000).toISOString() },
@@ -80,7 +80,7 @@ export default function OrderDetailPage() {
           advance_paid, balance_paid, notes, admin_notes, estimated_delivery,
           created_at, updated_at, delivery_address,
           profiles(full_name, email, phone),
-          order_items(id, product_name, quantity, unit_price, total_price, specifications),
+          order_items(id, product_name, quantity, unit_price, total_price, specifications, design_file_url, needs_design),
           order_status_history(id, status, note, created_at)
         `)
         .eq('id', id)
@@ -253,6 +253,16 @@ export default function OrderDetailPage() {
                           ))}
                         </div>
                       )}
+                      {item.design_file_url ? (
+                        <a href={item.design_file_url} target="_blank" rel="noopener noreferrer"
+                          className="mt-1.5 inline-flex items-center gap-1 text-[11px] text-brand-blue hover:underline">
+                          <Download size={11} /> Design file
+                        </a>
+                      ) : item.needs_design ? (
+                        <span className="mt-1.5 inline-flex items-center gap-1 text-[11px] text-amber-600">
+                          <FileText size={11} /> Design assistance requested
+                        </span>
+                      ) : null}
                     </td>
                     <td className="px-4 py-3 text-center text-text-secondary">{item.quantity?.toLocaleString() ?? '—'}</td>
                     <td className="px-4 py-3 text-right font-price text-text-secondary">₹{item.unit_price}</td>
@@ -344,6 +354,88 @@ export default function OrderDetailPage() {
               className="h-9 px-4 rounded-lg border border-border text-sm font-semibold text-text-secondary hover:bg-bg-secondary transition-colors">
               Save Note
             </button>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="bg-white rounded-2xl border border-border p-5 space-y-2">
+            <h2 className="font-semibold text-text-primary text-sm mb-3">Quick Actions</h2>
+
+            {/* Send email actions */}
+            <button
+              onClick={async () => {
+                setSaving(true)
+                try {
+                  const r = await fetch('/api/admin/send-email', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'confirmation', orderId: order.id }) })
+                  const d = await r.json()
+                  showToast(d.success ? 'Confirmation email sent!' : (d.error ?? 'Failed'), d.success ? 'success' : 'error')
+                } catch { showToast('Failed to send email', 'error') } finally { setSaving(false) }
+              }}
+              disabled={saving}
+              className="w-full flex items-center gap-2 h-9 px-4 rounded-lg border border-border text-sm font-medium text-text-secondary hover:bg-bg-secondary transition-colors text-left">
+              📧 Send Order Confirmation Email
+            </button>
+
+            <button
+              onClick={async () => {
+                setSaving(true)
+                try {
+                  const r = await fetch('/api/admin/send-email', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'dispatched', orderId: order.id }) })
+                  const d = await r.json()
+                  showToast(d.success ? 'Dispatch email sent!' : (d.error ?? 'Failed'), d.success ? 'success' : 'error')
+                } catch { showToast('Failed to send email', 'error') } finally { setSaving(false) }
+              }}
+              disabled={saving}
+              className="w-full flex items-center gap-2 h-9 px-4 rounded-lg border border-border text-sm font-medium text-text-secondary hover:bg-bg-secondary transition-colors text-left">
+              🚚 Send Dispatch Notification Email
+            </button>
+
+            <button
+              onClick={async () => {
+                setSaving(true)
+                try {
+                  const r = await fetch('/api/admin/send-email', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'quote', orderId: order.id }) })
+                  const d = await r.json()
+                  showToast(d.success ? 'Quote email sent!' : (d.error ?? 'Failed'), d.success ? 'success' : 'error')
+                } catch { showToast('Failed to send email', 'error') } finally { setSaving(false) }
+              }}
+              disabled={saving}
+              className="w-full flex items-center gap-2 h-9 px-4 rounded-lg border border-border text-sm font-medium text-text-secondary hover:bg-bg-secondary transition-colors text-left">
+              📄 Send Quote to Customer
+            </button>
+
+            {/* Payment link */}
+            {!order.advance_paid && (
+              <button
+                onClick={async () => {
+                  setSaving(true)
+                  try {
+                    const r = await fetch('/api/admin/payment-link', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orderId: order.id, type: 'advance' }) })
+                    const d = await r.json()
+                    if (d.success) { showToast('Payment link created!', 'success'); window.open(d.url, '_blank') }
+                    else showToast(d.error ?? 'Failed', 'error')
+                  } catch { showToast('Failed', 'error') } finally { setSaving(false) }
+                }}
+                disabled={saving}
+                className="w-full flex items-center gap-2 h-9 px-4 rounded-lg bg-brand-blue/10 text-brand-blue border border-brand-blue/20 text-sm font-semibold hover:bg-brand-blue/20 transition-colors">
+                💳 Generate Advance Payment Link
+              </button>
+            )}
+            {order.advance_paid && !order.balance_paid && (
+              <button
+                onClick={async () => {
+                  setSaving(true)
+                  try {
+                    const r = await fetch('/api/admin/payment-link', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orderId: order.id, type: 'balance' }) })
+                    const d = await r.json()
+                    if (d.success) { showToast('Balance payment link created!', 'success'); window.open(d.url, '_blank') }
+                    else showToast(d.error ?? 'Failed', 'error')
+                  } catch { showToast('Failed', 'error') } finally { setSaving(false) }
+                }}
+                disabled={saving}
+                className="w-full flex items-center gap-2 h-9 px-4 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 text-sm font-semibold hover:bg-amber-100 transition-colors">
+                💰 Generate Balance Payment Link
+              </button>
+            )}
           </div>
         </div>
       </div>

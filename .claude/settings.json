@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "f=$(jq -r '.tool_input.file_path // .tool_response.filePath // \"\"'); echo \"$f\" | grep -qE '^/home/harshit/Documents/jpp-web/src/.*\\.(ts|tsx|css)$' && echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":\"CLAUDE.md UPDATE REQUIRED: You just modified a source file in jpp-web/src. Check whether your change affects any section in CLAUDE.md (file structure, DB schema, API routes, key patterns, components, env vars, build stats) and update the relevant section before ending your turn.\"}}' || true",
+            "timeout": 5,
+            "statusMessage": "Checking if CLAUDE.md needs updating…"
+          }
+        ]
+      }
+    ]
+  }
+}

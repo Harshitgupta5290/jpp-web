@@ -56,6 +56,9 @@ export default function EditProductPage() {
   const [finishes, setFinishes] = useState<string[]>([])
   const [sides, setSides] = useState<string[]>([])
   const [slabs, setSlabs] = useState<PricingSlab[]>([])
+  const [metaTitle, setMetaTitle] = useState('')
+  const [metaDescription, setMetaDescription] = useState('')
+  const [seoKeywords, setSeoKeywords] = useState<string[]>([])
 
   const showToast = (msg: string, type: 'success' | 'error') => {
     setToast({ msg, type })
@@ -85,6 +88,9 @@ export default function EditProductPage() {
         const specs = prod.specifications as Record<string, string[]> | null
         setSizes(specs?.sizes ?? []); setPaperTypes(specs?.paperTypes ?? [])
         setFinishes(specs?.finishes ?? []); setSides(specs?.sides ?? [])
+        setMetaTitle((prod as any).meta_title ?? '')
+        setMetaDescription((prod as any).meta_description ?? '')
+        setSeoKeywords((prod as any).seo_keywords ?? [])
       }
 
       if (slabsData && slabsData.length > 0) {
@@ -108,6 +114,9 @@ export default function EditProductPage() {
         min_quantity: parseInt(minQty) || 100,
         is_active: isActive, has_live_preview: hasPreview,
         specifications: { sizes, paperTypes, finishes, sides },
+        meta_title: metaTitle || null,
+        meta_description: metaDescription || null,
+        seo_keywords: seoKeywords.length > 0 ? seoKeywords : null,
       }).eq('id', id!)
 
       if (error) throw error
@@ -246,6 +255,27 @@ export default function EditProductPage() {
               ))}
             </div>
           )}
+        </div>
+
+        {/* SEO */}
+        <div className="bg-white rounded-2xl border border-border p-6 space-y-4">
+          <h2 className="font-semibold text-text-primary border-b border-border pb-3">SEO</h2>
+          <div>
+            <label className="block text-sm font-semibold text-text-primary mb-1.5">Meta Title</label>
+            <input value={metaTitle} onChange={(e) => setMetaTitle(e.target.value)}
+              placeholder={`${name} | Jawahar Printing Press`}
+              maxLength={70}
+              className="w-full h-10 px-3 rounded-lg border border-border bg-white text-sm outline-none focus:border-brand-blue" />
+            <p className="text-xs text-text-tertiary mt-1">{metaTitle.length}/70 chars</p>
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-text-primary mb-1.5">Meta Description</label>
+            <textarea value={metaDescription} onChange={(e) => setMetaDescription(e.target.value)}
+              rows={2} maxLength={160} placeholder="Brief description for search engines…"
+              className="w-full px-3 py-2.5 rounded-lg border border-border bg-white text-sm outline-none focus:border-brand-blue resize-none" />
+            <p className="text-xs text-text-tertiary mt-1">{metaDescription.length}/160 chars</p>
+          </div>
+          <TagInput label="SEO Keywords" tags={seoKeywords} onChange={setSeoKeywords} />
         </div>
 
         <div className="flex gap-3">

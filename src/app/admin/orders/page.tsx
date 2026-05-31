@@ -2,15 +2,14 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   Search, RefreshCw, Eye, X, ChevronDown, Filter,
   ShoppingBag, CheckCircle, Truck, AlertCircle,
+  Download, Square, CheckSquare, Save,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import type { OrderStatus } from '@/types/database'
-
-// ─── Status config ─────────────────────────────────────────────────────────────
 
 const STATUS_CONFIG: Record<OrderStatus, { label: string; color: string; bg: string; border: string }> = {
   pending_quote:    { label: 'Pending Quote',    color: '#D97706', bg: '#FEF3C7', border: '#FDE68A' },
@@ -34,8 +33,6 @@ const STATUS_GROUPS = {
 const PENDING_STATUSES: OrderStatus[] = ['pending_quote', 'quote_sent', 'advance_pending']
 const ACTIVE_STATUSES:  OrderStatus[] = ['confirmed', 'processing', 'ready', 'out_for_delivery']
 
-// ─── Types ─────────────────────────────────────────────────────────────────────
-
 interface OrderRow {
   id: string
   order_number: string
@@ -47,8 +44,6 @@ interface OrderRow {
   customer_name: string | null
   customer_phone: string | null
 }
-
-// ─── Mock data ─────────────────────────────────────────────────────────────────
 
 const MOCK_ORDERS: OrderRow[] = [
   { id: '1', order_number: 'JPP-2024-247', status: 'processing',       total_amount: 4200,  advance_paid: true,  balance_paid: false, created_at: new Date(Date.now()-3.6e6).toISOString(),  customer_name: 'Rahul Sharma',  customer_phone: '9876543210' },
@@ -85,14 +80,23 @@ function timeAgo(d: string) {
   return new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
 }
 
-// ─── Orders Page ───────────────────────────────────────────────────────────────
-
 export default function OrdersPage() {
   const [orders, setOrders] = useState<OrderRow[]>(MOCK_ORDERS)
   const [search, setSearch] = useState('')
   const [group, setGroup] = useState<keyof typeof STATUS_GROUPS>('all')
   const [statusFilter, setStatusFilter] = useState<OrderStatus | 'all'>('all')
   const [loading, setLoading] = useState(false)
+  const [exporting, setExporting] = useState(false)
+
+  // Bulk ops state
+  const [selected, setSelected] = useState<Set<string>>(new Set())
+  const [bulkStatus, setBulkStatus] = useState<OrderStatus | ''>('')
+  const [bulkSaving, setBulkSaving] = useState(false)
+  const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null)
+
+  const showToast = (msg: string, type: 'success' | 'error') => {
+    setToast({ msg, type }); setTimeout(() => setToast(null), 3500)
+  }
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -142,24 +146,96 @@ export default function OrdersPage() {
     done:    orders.filter(o => o.status === 'delivered').length,
   }
 
+  const allFilteredSelected = filtered.length > 0 && filtered.every((o) => selected.has(o.id))
+
+  const toggleAll = () => {
+    if (allFilteredSelected) {
+      setSelected((s) => { const n = new Set(s); filtered.forEach((o) => n.delete(o.id)); return n })
+    } else {
+      setSelected((s) => { const n = new Set(s); filtered.forEach((o) => n.add(o.id)); return n })
+    }
+  }
+
+  const toggleOne = (id: string) => {
+    setSelected((s) => {
+      const n = new Set(s)
+      if (n.has(id)) { n.delete(id) } else { n.add(id) }
+      return n
+    })
+  }
+
+  const handleBulkStatusUpdate = async () => {
+    if (!bulkStatus || selected.size === 0) return
+    setBulkSaving(true)
+    try {
+      const supabase = createClient()
+      const ids = Array.from(selected)
+      const { error } = await (supabase as any)
+        .from('orders')
+        .update({ status: bulkStatus, updated_at: new Date().toISOString() })
+        .in('id', ids)
+      if (error) throw error
+      setOrders((prev) => prev.map((o) => selected.has(o.id) ? { ...o, status: bulkStatus as OrderStatus } : o))
+      setSelected(new Set())
+      setBulkStatus('')
+      showToast(`Updated ${ids.length} order${ids.length > 1 ? 's' : ''} to ${STATUS_CONFIG[bulkStatus as OrderStatus]?.label}`, 'success')
+    } catch {
+      showToast('Bulk update failed', 'error')
+    } finally { setBulkSaving(false) }
+  }
+
+  const handleExport = async () => {
+    setExporting(true)
+    try {
+      const params = new URLSearchParams()
+      if (statusFilter !== 'all') params.set('status', statusFilter)
+      const res = await fetch(`/api/admin/export-orders?${params}`)
+      if (!res.ok) throw new Error('Export failed')
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `jpp-orders-${new Date().toISOString().split('T')[0]}.csv`
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch {
+      showToast('Export failed', 'error')
+    } finally { setExporting(false) }
+  }
+
   return (
     <div className="p-6 space-y-5">
+      {/* Toast */}
+      {toast && (
+        <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }}
+          className={`fixed top-4 right-4 z-50 flex items-center gap-2 px-4 py-3 rounded-xl shadow-large text-sm font-semibold ${toast.type === 'success' ? 'bg-success text-white' : 'bg-error text-white'}`}>
+          {toast.msg}
+        </motion.div>
+      )}
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="font-display font-bold text-2xl text-text-primary">Orders</h1>
           <p className="text-sm text-text-secondary mt-0.5">{orders.length} total orders</p>
         </div>
-        <button onClick={load} disabled={loading}
-          className="flex items-center gap-1.5 h-9 px-3 rounded-lg border border-border text-sm text-text-secondary hover:bg-bg-secondary transition-colors disabled:opacity-50 self-start">
-          <RefreshCw size={14} className={loading ? 'animate-spin' : ''} /> Refresh
-        </button>
+        <div className="flex gap-2">
+          <button onClick={handleExport} disabled={exporting}
+            className="flex items-center gap-1.5 h-9 px-3 rounded-lg border border-border text-sm text-text-secondary hover:bg-bg-secondary transition-colors disabled:opacity-50">
+            <Download size={14} className={exporting ? 'animate-spin' : ''} />
+            {exporting ? 'Exporting…' : 'Export CSV'}
+          </button>
+          <button onClick={load} disabled={loading}
+            className="flex items-center gap-1.5 h-9 px-3 rounded-lg border border-border text-sm text-text-secondary hover:bg-bg-secondary transition-colors disabled:opacity-50">
+            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} /> Refresh
+          </button>
+        </div>
       </div>
 
       {/* Group tabs */}
       <div className="flex gap-2 flex-wrap">
         {(Object.entries(STATUS_GROUPS) as [keyof typeof STATUS_GROUPS, { label: string; icon: React.ElementType }][]).map(([key, { label, icon: Icon }]) => (
-          <button key={key} onClick={() => { setGroup(key); setStatusFilter('all') }}
+          <button key={key} onClick={() => { setGroup(key); setStatusFilter('all'); setSelected(new Set()) }}
             className={`flex items-center gap-2 h-9 px-4 rounded-xl text-sm font-semibold transition-all ${
               group === key
                 ? 'bg-brand-blue text-white shadow-glow-sm'
@@ -185,7 +261,7 @@ export default function OrdersPage() {
         </div>
         <div className="relative">
           <Filter size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary pointer-events-none" />
-          <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as OrderStatus | 'all')}
+          <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value as OrderStatus | 'all'); setSelected(new Set()) }}
             className="h-9 pl-8 pr-8 bg-white border border-border rounded-lg text-sm text-text-secondary outline-none focus:border-brand-blue appearance-none cursor-pointer">
             <option value="all">All Statuses</option>
             {(Object.entries(STATUS_CONFIG) as [OrderStatus, { label: string }][]).map(([k, { label }]) => (
@@ -196,13 +272,54 @@ export default function OrdersPage() {
         </div>
       </div>
 
+      {/* Bulk action bar */}
+      <AnimatePresence>
+        {selected.size > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: -8, height: 0 }}
+            animate={{ opacity: 1, y: 0, height: 'auto' }}
+            exit={{ opacity: 0, y: -8, height: 0 }}
+            className="overflow-hidden"
+          >
+            <div className="flex flex-wrap items-center gap-3 bg-brand-blue/5 border border-brand-blue/20 rounded-xl px-4 py-3">
+              <span className="text-sm font-semibold text-brand-blue">{selected.size} selected</span>
+              <div className="flex-1" />
+              <div className="relative">
+                <select value={bulkStatus} onChange={(e) => setBulkStatus(e.target.value as OrderStatus | '')}
+                  className="h-8 pl-3 pr-8 bg-white border border-border rounded-lg text-sm text-text-secondary outline-none focus:border-brand-blue appearance-none cursor-pointer">
+                  <option value="">Change status to…</option>
+                  {(Object.entries(STATUS_CONFIG) as [OrderStatus, { label: string }][]).map(([k, { label }]) => (
+                    <option key={k} value={k}>{label}</option>
+                  ))}
+                </select>
+                <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-text-tertiary pointer-events-none" />
+              </div>
+              <button onClick={handleBulkStatusUpdate} disabled={!bulkStatus || bulkSaving}
+                className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-brand-blue text-white text-xs font-semibold hover:bg-[#1a5ce8] transition-colors disabled:opacity-50">
+                <Save size={12} className={bulkSaving ? 'animate-spin' : ''} />
+                Apply
+              </button>
+              <button onClick={() => setSelected(new Set())}
+                className="h-8 px-3 rounded-lg border border-border text-xs font-semibold text-text-secondary hover:bg-bg-secondary transition-colors">
+                Clear
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Table */}
       <div className="bg-white rounded-2xl border border-border overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border bg-bg-secondary">
-                <th className="text-left px-5 py-3 text-xs font-semibold text-text-secondary uppercase tracking-wide">Order #</th>
+                <th className="w-10 px-4 py-3">
+                  <button onClick={toggleAll} className="flex items-center justify-center text-text-tertiary hover:text-brand-blue transition-colors">
+                    {allFilteredSelected ? <CheckSquare size={15} className="text-brand-blue" /> : <Square size={15} />}
+                  </button>
+                </th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-text-secondary uppercase tracking-wide">Order #</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-text-secondary uppercase tracking-wide">Customer</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-text-secondary uppercase tracking-wide">Status</th>
                 <th className="text-center px-4 py-3 text-xs font-semibold text-text-secondary uppercase tracking-wide">Payment</th>
@@ -213,16 +330,21 @@ export default function OrdersPage() {
             </thead>
             <tbody className="divide-y divide-border">
               {filtered.length === 0 ? (
-                <tr><td colSpan={7} className="text-center py-16 text-text-secondary text-sm">No orders found.</td></tr>
+                <tr><td colSpan={8} className="text-center py-16 text-text-secondary text-sm">No orders found.</td></tr>
               ) : filtered.map((order, i) => (
                 <motion.tr
                   key={order.id}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: i * 0.02 }}
-                  className="hover:bg-bg-secondary/50 transition-colors"
+                  className={`transition-colors ${selected.has(order.id) ? 'bg-blue-50/60' : 'hover:bg-bg-secondary/50'}`}
                 >
-                  <td className="px-5 py-3.5">
+                  <td className="px-4 py-3.5">
+                    <button onClick={() => toggleOne(order.id)} className="flex items-center justify-center text-text-tertiary hover:text-brand-blue transition-colors">
+                      {selected.has(order.id) ? <CheckSquare size={15} className="text-brand-blue" /> : <Square size={15} />}
+                    </button>
+                  </td>
+                  <td className="px-4 py-3.5">
                     <Link href={`/admin/orders/${order.id}`}
                       className="font-mono text-xs font-bold text-brand-blue hover:underline">
                       {order.order_number}
@@ -262,8 +384,11 @@ export default function OrdersPage() {
             </tbody>
           </table>
         </div>
-        <div className="px-5 py-3 border-t border-border bg-bg-secondary/50">
+        <div className="px-5 py-3 border-t border-border bg-bg-secondary/50 flex items-center justify-between">
           <p className="text-xs text-text-secondary">Showing {filtered.length} of {orders.length} orders</p>
+          {selected.size > 0 && (
+            <p className="text-xs text-brand-blue font-semibold">{selected.size} selected</p>
+          )}
         </div>
       </div>
     </div>

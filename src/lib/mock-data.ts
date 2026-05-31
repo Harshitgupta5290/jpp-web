@@ -1,5 +1,8 @@
 import type { Category, Product, PricingSlab } from '@/types/product'
 
+type MockProduct = Omit<Product, 'meta_title' | 'meta_description' | 'seo_keywords'>
+const seo = { meta_title: null, meta_description: null, seo_keywords: null }
+
 // ─── Categories ───────────────────────────────────────────────────────────────
 
 export const MOCK_CATEGORIES: Category[] = [
@@ -15,7 +18,7 @@ export const MOCK_CATEGORIES: Category[] = [
 
 // ─── Products ─────────────────────────────────────────────────────────────────
 
-export const MOCK_PRODUCTS: Product[] = [
+const RAW_MOCK_PRODUCTS: MockProduct[] = [
   // Business Cards
   {
     id: 'prod-bc-1', category_id: 'cat-1', name: 'Standard Business Cards', slug: 'standard-business-cards',
@@ -85,6 +88,8 @@ export const MOCK_PRODUCTS: Product[] = [
     images: [], is_active: true, display_order: 1, created_at: '',
   },
 ]
+
+export const MOCK_PRODUCTS: Product[] = RAW_MOCK_PRODUCTS.map((p) => ({ ...p, ...seo }))
 
 // ─── Pricing Slabs ────────────────────────────────────────────────────────────
 
