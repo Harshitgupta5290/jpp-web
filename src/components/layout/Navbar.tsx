@@ -319,7 +319,7 @@ export default function Navbar() {
 
   return (
     <>
-      <header className={`fixed top-0 left-0 right-0 z-20 bg-white transition-all duration-300 ${scrolled ? 'shadow-nav' : 'border-b border-transparent'}`}>
+      <header className={`w-full bg-white transition-all duration-300 ${scrolled ? 'shadow-nav' : 'border-b border-transparent'}`}>
         <div className="container-page">
           <div className="flex items-center justify-between h-16">
 

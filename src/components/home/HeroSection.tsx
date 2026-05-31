@@ -98,7 +98,7 @@ export default function HeroSection() {
   const ease = mounted
 
   return (
-    <section className="relative min-h-[calc(100dvh-4rem)] flex items-center overflow-hidden bg-white">
+    <section className="relative min-h-[calc(100dvh-10rem)] flex items-center overflow-hidden bg-white">
 
       {/* Background — subtle dot grid */}
       <div className="absolute inset-0 bg-dots opacity-40 pointer-events-none" aria-hidden="true" />
