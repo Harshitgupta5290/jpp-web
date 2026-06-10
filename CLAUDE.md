@@ -125,7 +125,7 @@ src/
 │   ├── robots.ts               # Robots.txt
 │   │
 │   ├── (public pages)
-│   │   ├── page.tsx            # Home — 12 sections
+│   │   ├── page.tsx            # Home — 17 sections (see section 13)
 │   │   ├── catalog/page.tsx    # Product listing
 │   │   ├── catalog/[category]/page.tsx         # Category listing
 │   │   ├── catalog/[category]/[product]/page.tsx  # Product detail
@@ -138,7 +138,8 @@ src/
 │   │   ├── order/cart/page.tsx
 │   │   ├── order/checkout/page.tsx
 │   │   ├── order/custom/page.tsx
-│   │   └── track/[orderId]/page.tsx
+│   │   ├── track/[orderId]/page.tsx
+│   │   └── gsm-calculator/page.tsx  # Free Paper GSM Calculator tool — client component, no auth
 │   │
 │   ├── admin/                  # Protected admin area (role=admin only)
 │   │   ├── layout.tsx          # Admin shell — Sidebar + TopBar
