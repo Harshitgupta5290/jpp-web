@@ -191,7 +191,7 @@ src/
 │   │   ├── PriceCalculator.tsx   # Live bulk pricing calculator
 │   │   ├── PrintingProcess.tsx   # Dark section — 6-step offset workflow
 │   │   ├── PrintingServices.tsx  # 6 service cards
-│   │   ├── ServicesShowcase.tsx  # Illustration-style card grid (8 services) — placed right after Hero
+│   │   ├── ServicesShowcase.tsx  # Illustration-style card grid — 4 product services + 3 tool cards (4+3 grid), placed right after Hero
 │   │   ├── Testimonials.tsx      # Dual-row review marquee
 │   │   └── TrustStrip.tsx        # 6 USPs
 │   ├── layout/
@@ -552,7 +552,7 @@ removeToast(id)
 | 1 | AnnouncementBar | Client (lazy) | 3 rotating offers, dismissible |
 | 2 | Navbar | Client (always) | Mega-menu, search, phone, cart |
 | 3 | HeroSection | Client (lazy) | Split layout, floating CSS mockups, stats |
-| 4 | ServicesShowcase | Client (lazy) | 8 illustration-style service cards in 4-col grid |
+| 4 | ServicesShowcase | Client (lazy) | 7 cards — 4 product services + 3 tools (Free Templates, Price Calc, Order Mgmt) in 4+3 grid |
 | 5 | TrustStrip | **Server** | 6 USPs on bg-secondary |
 | 6 | CategoryGrid | **Server** | 8 categories |
 | 7 | ClientLogos | Client (lazy) | Dual-row marquee |

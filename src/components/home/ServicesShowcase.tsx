@@ -3,122 +3,230 @@
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import {
-  CreditCard, BookOpen, Package, Megaphone,
-  FileText, Heart, ImageIcon, Calculator,
+  Printer, CreditCard, Package, Building2,
+  Download, Calculator, MapPin,
+  Layers, Zap, FileText, Star, Sparkles,
 } from 'lucide-react'
 
-const SERVICES = [
+type Service = {
+  Icon: React.ElementType
+  Sub1?: React.ElementType
+  Sub2?: React.ElementType
+  iconColor: string
+  sub1Color?: string
+  sub2Color?: string
+  badge?: string
+  badgeBg?: string
+  title: string
+  company: string
+  companyColor: string
+  desc: string
+  link: string
+}
+
+/* ── Row 1: Core print services ── */
+const ROW1: Service[] = [
   {
-    Icon: CreditCard,
-    bg: 'from-blue-100 to-blue-50',
-    iconRing: '#BFDBFE',
+    Icon: Printer,
+    Sub1: Star,
+    Sub2: Sparkles,
     iconColor: '#2D6FFF',
-    dots: ['#93C5FD', '#60A5FA', '#BFDBFE'],
-    badge: 'Best Seller',
+    sub1Color: '#F5A500',
+    sub2Color: '#93C5FD',
+    badge: 'Popular',
     badgeBg: '#2D6FFF',
-    title: 'Business Cards',
+    title: 'Printing Services',
     company: 'Jawahar Printing Press',
     companyColor: '#2D6FFF',
-    desc: 'Premium matte, glossy, and spot-UV cards that make a lasting first impression on 350–600 GSM stock.',
+    desc: 'A wide range of premium printing services — visiting cards, pamphlets, posters, stationery, and much more at competitive prices.',
+    link: '/catalog',
+  },
+  {
+    Icon: CreditCard,
+    Sub1: Layers,
+    Sub2: Zap,
+    iconColor: '#10B981',
+    sub1Color: '#059669',
+    sub2Color: '#6EE7B7',
+    title: 'Business Stationery',
+    company: 'Jawahar Printing Press',
+    companyColor: '#10B981',
+    desc: 'Professional visiting cards, letterheads, envelopes and notepads on 350–600 GSM premium card stock.',
     link: '/catalog/business-cards',
   },
   {
-    Icon: BookOpen,
-    bg: 'from-emerald-100 to-emerald-50',
-    iconRing: '#BBF7D0',
-    iconColor: '#10B981',
-    dots: ['#86EFAC', '#4ADE80', '#BBF7D0'],
-    badge: null,
-    title: 'Brochures & Flyers',
-    company: 'Jawahar Printing Press',
-    companyColor: '#10B981',
-    desc: 'Tri-fold, bi-fold, and Z-fold brochures on 130–170 GSM art paper for all your marketing needs.',
-    link: '/catalog/brochures',
-  },
-  {
     Icon: Package,
-    bg: 'from-orange-100 to-orange-50',
-    iconRing: '#FED7AA',
+    Sub1: Zap,
+    Sub2: Star,
     iconColor: '#EA580C',
-    dots: ['#FDBA74', '#FB923C', '#FED7AA'],
-    badge: null,
-    title: 'Packaging Boxes',
+    sub1Color: '#F97316',
+    sub2Color: '#FED7AA',
+    badge: 'New',
+    badgeBg: '#10B981',
+    title: 'Packaging Solutions',
     company: 'Jawahar Printing Press',
     companyColor: '#EA580C',
-    desc: 'Custom printed rigid boxes, folding cartons, and mailer boxes for every product and occasion.',
+    desc: 'Custom printed rigid boxes, folding cartons, and mailer boxes — food-safe inks, custom die-cutting.',
     link: '/catalog/packaging',
   },
   {
-    Icon: Megaphone,
-    bg: 'from-purple-100 to-purple-50',
-    iconRing: '#DDD6FE',
+    Icon: Building2,
+    Sub1: FileText,
+    Sub2: Layers,
     iconColor: '#8B5CF6',
-    dots: ['#C4B5FD', '#A78BFA', '#DDD6FE'],
-    badge: null,
-    title: 'Banners & Flex',
+    sub1Color: '#7C3AED',
+    sub2Color: '#DDD6FE',
+    title: 'Corporate Accounts',
     company: 'Jawahar Printing Press',
     companyColor: '#8B5CF6',
-    desc: 'Outdoor flex, vinyl, and canvas banners in any size — bold, weather-resistant, fast turnaround.',
-    link: '/catalog/banners',
+    desc: 'Free marketplace for bulk printing — dedicated account managers, volume discounts, and GST invoices.',
+    link: '/clients',
   },
+]
+
+/* ── Row 2: Tools & utilities (like the screenshot's bottom 3) ── */
+const ROW2: Service[] = [
   {
-    Icon: FileText,
-    bg: 'from-sky-100 to-sky-50',
-    iconRing: '#BAE6FD',
-    iconColor: '#0EA5E9',
-    dots: ['#7DD3FC', '#38BDF8', '#BAE6FD'],
-    badge: null,
-    title: 'Letterheads & Stationery',
-    company: 'Jawahar Printing Press',
-    companyColor: '#0EA5E9',
-    desc: 'Corporate stationery sets — letterheads, envelopes, and notepads that elevate your brand identity.',
-    link: '/catalog/letterheads',
+    Icon: Download,
+    Sub1: FileText,
+    Sub2: Sparkles,
+    iconColor: '#0D9488',
+    sub1Color: '#0F766E',
+    sub2Color: '#99F6E4',
+    badge: 'Free',
+    badgeBg: '#0D9488',
+    title: 'Free Design Templates',
+    company: 'Free Resource by JPP',
+    companyColor: '#0D9488',
+    desc: 'Download free print-ready design templates and graphic resources crafted exclusively for printers and advertising agencies.',
+    link: '/order/custom',
   },
   {
     Icon: Calculator,
-    bg: 'from-amber-100 to-amber-50',
-    iconRing: '#FDE68A',
+    Sub1: Layers,
+    Sub2: Zap,
     iconColor: '#F5A500',
-    dots: ['#FCD34D', '#FBBF24', '#FDE68A'],
+    sub1Color: '#D97706',
+    sub2Color: '#FDE68A',
     badge: 'Free Tool',
     badgeBg: '#F5A500',
     title: 'Bulk Price Calculator',
     company: 'Free Tool by JPP',
     companyColor: '#F5A500',
-    desc: 'Calculate bulk printing costs instantly — simple, accurate, and developed for print buyers.',
+    desc: 'Free-to-use bulk pricing & Paper GSM calculator — simple, accurate, and developed by Jawahar Printing Press.',
     link: '/#price-calculator',
   },
   {
-    Icon: Heart,
-    bg: 'from-rose-100 to-rose-50',
-    iconRing: '#FECDD3',
-    iconColor: '#E11D48',
-    dots: ['#FDA4AF', '#FB7185', '#FECDD3'],
-    badge: null,
-    title: 'Wedding Cards',
-    company: 'Jawahar Printing Press',
-    companyColor: '#E11D48',
-    desc: 'Elegant invitation cards, inserts, and envelopes with premium finishes for every special occasion.',
-    link: '/catalog/wedding-cards',
-  },
-  {
-    Icon: ImageIcon,
-    bg: 'from-teal-100 to-teal-50',
-    iconRing: '#99F6E4',
-    iconColor: '#0D9488',
-    dots: ['#5EEAD4', '#2DD4BF', '#99F6E4'],
-    badge: null,
-    title: 'Photo Printing',
-    company: 'Jawahar Printing Press',
-    companyColor: '#0D9488',
-    desc: 'High-resolution photo prints on glossy, matte, and canvas for personal and professional use.',
-    link: '/catalog/photo-printing',
+    Icon: MapPin,
+    Sub1: Zap,
+    Sub2: Star,
+    iconColor: '#0EA5E9',
+    sub1Color: '#0284C7',
+    sub2Color: '#BAE6FD',
+    title: 'Order Management',
+    company: 'Free Service by JPP',
+    companyColor: '#0EA5E9',
+    desc: 'Free Printing Order Management — simple, powerful, and designed to streamline your daily print shop operations.',
+    link: '/contact',
   },
 ]
 
+function IllustrationArea({ service }: { service: Service }) {
+  const { Icon, Sub1, Sub2, iconColor, sub1Color, sub2Color, badge, badgeBg } = service
+  return (
+    <div className="relative flex items-center justify-center bg-white overflow-hidden" style={{ height: 170 }}>
+      {/* Badge */}
+      {badge && (
+        <span
+          className="absolute top-3 left-3 z-20 text-white text-[10px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full shadow-sm"
+          style={{ backgroundColor: badgeBg }}
+        >
+          {badge}
+        </span>
+      )}
+
+      {/* Halo rings — concentric, very subtle */}
+      <span
+        className="absolute rounded-full pointer-events-none"
+        style={{ width: 148, height: 148, backgroundColor: `${iconColor}07` }}
+      />
+      <span
+        className="absolute rounded-full pointer-events-none"
+        style={{ width: 112, height: 112, backgroundColor: `${iconColor}11` }}
+      />
+      <span
+        className="absolute rounded-full pointer-events-none"
+        style={{ width: 80, height: 80, backgroundColor: `${iconColor}18` }}
+      />
+
+      {/* Main icon */}
+      <Icon
+        size={68}
+        style={{ color: iconColor }}
+        strokeWidth={1.15}
+        className="relative z-10 group-hover:scale-110 transition-transform duration-300 drop-shadow-sm"
+      />
+
+      {/* Floating secondary icon — bottom-right quadrant */}
+      {Sub1 && (
+        <Sub1
+          size={20}
+          strokeWidth={1.6}
+          className="absolute z-10 opacity-80"
+          style={{ color: sub1Color, bottom: 24, right: '22%' }}
+        />
+      )}
+
+      {/* Tiny accent icon — top-right */}
+      {Sub2 && (
+        <Sub2
+          size={14}
+          strokeWidth={1.8}
+          className="absolute z-10 opacity-60"
+          style={{ color: sub2Color, top: 22, right: '20%' }}
+        />
+      )}
+    </div>
+  )
+}
+
+function ServiceCard({ service, delay }: { service: Service; delay: number }) {
+  return (
+    <motion.div
+      key={service.title}
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-40px' }}
+      transition={{ delay, duration: 0.35 }}
+      className="h-full"
+    >
+      <Link
+        href={service.link}
+        className="group flex flex-col rounded-2xl border border-border bg-white overflow-hidden hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 h-full"
+      >
+        <IllustrationArea service={service} />
+
+        {/* Divider */}
+        <div className="h-px bg-border mx-0" />
+
+        {/* Content */}
+        <div className="flex flex-col flex-1 px-5 py-4 text-center">
+          <h3 className="font-display font-bold text-[15px] text-text-primary leading-snug mb-1">
+            {service.title}
+          </h3>
+          <p className="text-xs font-semibold mb-2.5" style={{ color: service.companyColor }}>
+            {service.company}
+          </p>
+          <p className="text-xs text-text-secondary leading-relaxed">{service.desc}</p>
+        </div>
+      </Link>
+    </motion.div>
+  )
+}
+
 export default function ServicesShowcase() {
   return (
-    <section className="py-16 bg-white">
+    <section className="py-14 bg-[#F8FAFC]">
       <div className="container-page">
         {/* Heading */}
         <motion.div
@@ -126,85 +234,31 @@ export default function ServicesShowcase() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
-          className="text-center mb-12"
+          className="text-center mb-10"
         >
-          <span className="section-label">Our Services</span>
-          <h2 className="font-display font-bold text-text-primary text-3xl sm:text-4xl mt-1">
-            Everything a printing professional needs{' '}
-            <span className="text-gradient-blue">— under one roof.</span>
+          <p className="text-sm text-text-secondary mb-1 tracking-wide uppercase font-semibold">
+            — What We Offer —
+          </p>
+          <h2 className="font-display font-bold text-text-primary text-3xl sm:text-4xl">
+            Our Services
           </h2>
+          <p className="text-text-secondary mt-2 max-w-xl mx-auto text-[15px]">
+            Everything a printing professional needs — under one roof.
+          </p>
         </motion.div>
 
-        {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {SERVICES.map(
-            ({ Icon, bg, iconRing, iconColor, dots, badge, badgeBg, title, company, companyColor, desc, link }, i) => (
-              <motion.div
-                key={title}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-40px' }}
-                transition={{ delay: i * 0.06, duration: 0.35 }}
-              >
-                <Link
-                  href={link}
-                  className="group flex flex-col rounded-2xl border border-border bg-white overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 h-full"
-                >
-                  {/* Illustration area */}
-                  <div className={`relative bg-gradient-to-br ${bg} flex items-center justify-center overflow-hidden`} style={{ height: 168 }}>
-                    {/* Badge */}
-                    {badge && (
-                      <span
-                        className="absolute top-3 right-3 z-10 text-white text-[10px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full"
-                        style={{ backgroundColor: badgeBg }}
-                      >
-                        {badge}
-                      </span>
-                    )}
+        {/* Row 1: 4 product service cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-5">
+          {ROW1.map((s, i) => (
+            <ServiceCard key={s.title} service={s} delay={i * 0.07} />
+          ))}
+        </div>
 
-                    {/* Decorative dots */}
-                    <span className="absolute top-4 left-5 w-8 h-8 rounded-full opacity-40" style={{ backgroundColor: dots[0] }} />
-                    <span className="absolute bottom-4 right-6 w-5 h-5 rounded-full opacity-30" style={{ backgroundColor: dots[1] }} />
-                    <span className="absolute bottom-6 left-10 w-3 h-3 rounded-full opacity-50" style={{ backgroundColor: dots[2] }} />
-                    <span className="absolute top-7 right-10 w-2 h-2 rounded-full opacity-60" style={{ backgroundColor: dots[0] }} />
-
-                    {/* Icon container */}
-                    <div
-                      className="relative z-10 w-20 h-20 rounded-2xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-300"
-                      style={{ backgroundColor: `${iconColor}18`, border: `2px solid ${iconRing}` }}
-                    >
-                      {/* Inner glow circle */}
-                      <div
-                        className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                        style={{ background: `radial-gradient(circle at center, ${iconColor}25, transparent 70%)` }}
-                      />
-                      <Icon size={36} style={{ color: iconColor }} strokeWidth={1.5} />
-                    </div>
-                  </div>
-
-                  {/* Content */}
-                  <div className="flex flex-col flex-1 p-4">
-                    <p
-                      className="text-xs font-semibold mb-1 truncate"
-                      style={{ color: companyColor }}
-                    >
-                      {company}
-                    </p>
-                    <h3 className="font-display font-bold text-base text-text-primary mb-2 leading-snug">
-                      {title}
-                    </h3>
-                    <p className="text-xs text-text-secondary leading-relaxed flex-1">{desc}</p>
-                    <span
-                      className="mt-3 text-xs font-semibold group-hover:underline"
-                      style={{ color: companyColor }}
-                    >
-                      Explore →
-                    </span>
-                  </div>
-                </Link>
-              </motion.div>
-            )
-          )}
+        {/* Row 2: 3 tool/utility cards — centered under row 1 */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 lg:w-3/4 lg:mx-auto">
+          {ROW2.map((s, i) => (
+            <ServiceCard key={s.title} service={s} delay={(i + 4) * 0.07} />
+          ))}
         </div>
       </div>
     </section>
