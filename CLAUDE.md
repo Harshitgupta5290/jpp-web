@@ -191,6 +191,7 @@ src/
 │   │   ├── PriceCalculator.tsx   # Live bulk pricing calculator
 │   │   ├── PrintingProcess.tsx   # Dark section — 6-step offset workflow
 │   │   ├── PrintingServices.tsx  # 6 service cards
+│   │   ├── ServicesShowcase.tsx  # Illustration-style card grid (8 services) — placed right after Hero
 │   │   ├── Testimonials.tsx      # Dual-row review marquee
 │   │   └── TrustStrip.tsx        # 6 USPs
 │   ├── layout/
@@ -551,19 +552,20 @@ removeToast(id)
 | 1 | AnnouncementBar | Client (lazy) | 3 rotating offers, dismissible |
 | 2 | Navbar | Client (always) | Mega-menu, search, phone, cart |
 | 3 | HeroSection | Client (lazy) | Split layout, floating CSS mockups, stats |
-| 4 | TrustStrip | **Server** | 6 USPs on bg-secondary |
-| 5 | CategoryGrid | **Server** | 8 categories |
-| 6 | ClientLogos | Client (lazy) | Dual-row marquee |
-| 7 | FeaturedProducts | Client (lazy) | 4 bestsellers |
-| 8 | PrintingProcess | Client (lazy) | Dark section, 6-step offset workflow |
-| 9 | PrintingServices | **Server** | 6 service cards |
-| 10 | HowItWorks | **Server** | 4-step order process |
-| 11 | PriceCalculator | Client (lazy) | Live bulk pricing |
-| 12 | PortfolioGallery | Client (lazy) | Masonry CSS gallery |
-| 13 | Testimonials | Client (lazy) | Dual-row marquee on bg-secondary |
-| 14 | FAQ | **Server** | Accordion |
-| 15 | Footer | Client (always) | Dark, payments, Maps |
-| 16 | FloatingWhatsApp | Client | 3 FABs: Email, Phone, WhatsApp |
+| 4 | ServicesShowcase | Client (lazy) | 8 illustration-style service cards in 4-col grid |
+| 5 | TrustStrip | **Server** | 6 USPs on bg-secondary |
+| 6 | CategoryGrid | **Server** | 8 categories |
+| 7 | ClientLogos | Client (lazy) | Dual-row marquee |
+| 8 | FeaturedProducts | Client (lazy) | 4 bestsellers |
+| 9 | PrintingProcess | Client (lazy) | Dark section, 6-step offset workflow |
+| 10 | PrintingServices | **Server** | 6 service cards |
+| 11 | HowItWorks | **Server** | 4-step order process |
+| 12 | PriceCalculator | Client (lazy) | Live bulk pricing |
+| 13 | PortfolioGallery | Client (lazy) | Masonry CSS gallery |
+| 14 | Testimonials | Client (lazy) | Dual-row marquee on bg-secondary |
+| 15 | FAQ | **Server** | Accordion |
+| 16 | Footer | Client (always) | Dark, payments, Maps |
+| 17 | FloatingWhatsApp | Client | 3 FABs: Email, Phone, WhatsApp |
 
 ---
 

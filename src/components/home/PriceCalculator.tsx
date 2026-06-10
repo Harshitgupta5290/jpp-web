@@ -93,7 +93,7 @@ export default function PriceCalculator() {
   const selectedProduct = PRODUCTS.find((p) => p.id === productId)!
 
   return (
-    <section className="section bg-bg-secondary">
+    <section id="price-calculator" className="section bg-bg-secondary">
       <div className="container-page">
         <div className="max-w-4xl mx-auto">
           <motion.div

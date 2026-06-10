@@ -11,6 +11,7 @@ import FAQ from '@/components/home/FAQ'
 // Dynamic (client-only) — lazy loaded, split into separate bundles
 // These have animations/canvas/framer-motion — defer them to keep initial JS small
 const HeroSection = dynamic(() => import('@/components/home/HeroSection'), { ssr: false })
+const ServicesShowcase = dynamic(() => import('@/components/home/ServicesShowcase'), { ssr: false })
 const ClientLogos = dynamic(() => import('@/components/home/ClientLogos'), { ssr: false })
 const FeaturedProducts = dynamic(() => import('@/components/home/FeaturedProducts'), { ssr: false })
 const PrintingProcess = dynamic(() => import('@/components/home/PrintingProcess'), { ssr: false })
@@ -24,7 +25,10 @@ export default function HomePage() {
       {/* 1. Hero */}
       <HeroSection />
 
-      {/* 2. Trust Strip — server-rendered, zero JS cost */}
+      {/* 2. Services Showcase — card grid after hero */}
+      <ServicesShowcase />
+
+      {/* 3. Trust Strip — server-rendered, zero JS cost */}
       <TrustStrip />
 
       {/* 3. Product Categories */}
